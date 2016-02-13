@@ -68,28 +68,6 @@ public class VolunteerPage extends AppCompatActivity {
         return true;
     }
 
-    private void bindViews() {
-        TextView numText = (TextView) findViewById(R.id.numStatus);
-        TextView needText = (TextView) findViewById(R.id.needStatus);
-        TextView locText = (TextView) findViewById(R.id.locStatus);
-        TextView timeText = (TextView) findViewById(R.id.timeStatus);
-
-        String tmpNum = String.format(getResources().getString(
-                R.string.help_num_string), userInfo.getNumber());
-        String tmpNeed = String.format(getResources().getString(
-                R.string.help_num_string), userInfo.getNeed());
-        String tmpLoc = String.format(getResources().getString(
-                R.string.help_num_string), userInfo.getLocation());
-        String tmpTime = String.format(getResources().getString(
-                R.string.help_num_string), userInfo.getTimeStamp());
-
-        numText.setText(tmpNum);
-        needText.setText(tmpNeed);
-        locText.setText(tmpLoc);
-        timeText.setText(tmpTime);
-
-    }
-
     /**
      * Poll Firebase server for new data.
      */
@@ -123,6 +101,9 @@ public class VolunteerPage extends AppCompatActivity {
         resetViews();
     }
 
+    /**
+     * Reset views in accordance with user interaction.
+     */
     private void resetViews() {
         bindViews();
         if (receivedData) {
@@ -144,5 +125,29 @@ public class VolunteerPage extends AppCompatActivity {
             foundReq.setVisibility(View.GONE);
             noReqView.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Bind text obtained from server to TextViews.
+     */
+    private void bindViews() {
+        TextView numText = (TextView) findViewById(R.id.numStatus);
+        TextView needText = (TextView) findViewById(R.id.needStatus);
+        TextView locText = (TextView) findViewById(R.id.locStatus);
+        TextView timeText = (TextView) findViewById(R.id.timeStatus);
+
+        String tmpNum = String.format(getResources().getString(
+                R.string.help_num_string), userInfo.getNumber());
+        String tmpNeed = String.format(getResources().getString(
+                R.string.help_num_string), userInfo.getNeed());
+        String tmpLoc = String.format(getResources().getString(
+                R.string.help_num_string), userInfo.getLocation());
+        String tmpTime = String.format(getResources().getString(
+                R.string.help_num_string), userInfo.getTimeStamp());
+
+        numText.setText(tmpNum);
+        needText.setText(tmpNeed);
+        locText.setText(tmpLoc);
+        timeText.setText(tmpTime);
     }
 }

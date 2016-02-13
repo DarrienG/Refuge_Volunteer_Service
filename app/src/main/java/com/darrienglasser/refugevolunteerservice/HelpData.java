@@ -6,11 +6,21 @@ public class HelpData {
     private String location;
     private String timeStamp;
 
+    /**
+     * Basic constructor. Left without arguments so Firebase can deserialze data.
+     */
     public HelpData() {
-        // Empty, necessary for Firebase to deserialze data
     }
 
-    // DEBUG
+    /**
+     * Debug constructor. Used to push dummy data to data members when unable to pull from
+     * Firebase.
+     *
+     * @param number Refugee number.
+     * @param need Required service.
+     * @param location General location.
+     * @param timeStamp When message was sent.
+     */
     public HelpData(String number, String need, String location, String timeStamp) {
         this.number = number;
         this.need = need;

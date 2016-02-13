@@ -32,7 +32,7 @@ public class Intro_Screen extends AppCompatActivity {
         ActivityCompat.requestPermissions(
                 this, new String[]{Manifest.permission.READ_PHONE_STATE}, tmp);
 
-
+        // Validate user if they have not already gone through validation process
         if (!haveDisplayed) {
             setContentView(R.layout.activity_intro_screen);
 
@@ -53,6 +53,7 @@ public class Intro_Screen extends AppCompatActivity {
                 }
             });
         } else {
+            // Skip to volunteer page otherwise
             startActivity(new Intent(getApplicationContext(), VolunteerPage.class));
             finishActivity(0);
         }
@@ -62,10 +63,8 @@ public class Intro_Screen extends AppCompatActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
     }
+
     @Override
     public void onRequestPermissionsResult(
             int requestCode, String permissions[], int grantResults[]) {

@@ -32,6 +32,8 @@ public class Intro_Screen extends AppCompatActivity {
         ActivityCompat.requestPermissions(
                 this, new String[]{Manifest.permission.READ_PHONE_STATE}, tmp);
 
+
+
         // Validate user if they have not already gone through validation process
         if (!haveDisplayed) {
             setContentView(R.layout.activity_intro_screen);
@@ -45,9 +47,9 @@ public class Intro_Screen extends AppCompatActivity {
                     Intent intent = new Intent(v.getContext(), VolunteerPage.class);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putBoolean(SENT_PREF, true).apply();
-                    Firebase sendDetails = myFirebaseRef.child("volunteers");
                     TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-                    sendDetails.push().setValue(tm.getLine1Number());
+                    Firebase sendDetails = myFirebaseRef.child("volunteers").child(tm.getLine1Number());
+                    sendDetails.child("number").setValue(1);
                     startActivity(intent);
                     finishActivity(0);
                 }

@@ -1,5 +1,11 @@
 package com.darrienglasser.refugevolunteerservice;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,8 +41,9 @@ public class VolunteerPage extends AppCompatActivity {
         noReqView = (TextView) findViewById(R.id.no_req);
         foundReq = (RelativeLayout) findViewById(R.id.cardLayoutId);
 
-        // pollDummyData();
-        pollData();
+
+        pollDummyData();
+        //pollData();
     }
 
     @Override
@@ -44,7 +51,6 @@ public class VolunteerPage extends AppCompatActivity {
         // Do nothing
         // We don't want to let the user go back to the parent activity
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -54,12 +60,11 @@ public class VolunteerPage extends AppCompatActivity {
                         getApplicationContext(),
                         "Refreshing content...",
                         Toast.LENGTH_SHORT).show();
-                // pollDummyData();
-                pollData();
+                pollDummyData();
+                // pollData();
                 return true;
         }
         return super.onOptionsItemSelected(item);
-
     }
 
     @Override
@@ -97,7 +102,7 @@ public class VolunteerPage extends AppCompatActivity {
      */
     private void pollDummyData() {
         receivedData = true;
-        userInfo = new HelpData("9789789789", "water", "Billerica", "5:00");
+        userInfo = new HelpData("1234567890", "water", "Billerica", "5:00");
         resetViews();
     }
 
@@ -119,6 +124,29 @@ public class VolunteerPage extends AppCompatActivity {
 
                 }
             });
+
+            ImageButton call = (ImageButton) findViewById(R.id.callButton);
+            call.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + userInfo.getNumber()));
+
+                    if (ContextCompat.checkSelfPermission(VolunteerPage.this,
+                            Manifest.permission.READ_CONTACTS)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        startActivity(callIntent);
+                        Log.d(TAG, "Permission not requested.");
+                    } else {
+                        ActivityCompat.requestPermissions(
+                                VolunteerPage.this,
+                                new String[]{Manifest.permission.CALL_PHONE},
+                                0);
+                        Log.d(TAG, "Permission requested.");
+                    }
+                }
+            });
+
             noReqView.setVisibility(View.GONE);
             foundReq.setVisibility(View.VISIBLE);
         } else {
@@ -136,18 +164,43 @@ public class VolunteerPage extends AppCompatActivity {
         TextView locText = (TextView) findViewById(R.id.locStatus);
         TextView timeText = (TextView) findViewById(R.id.timeStatus);
 
-        String tmpNum = String.format(getResources().getString(
-                R.string.help_num_string), userInfo.getNumber());
-        String tmpNeed = String.format(getResources().getString(
-                R.string.help_num_string), userInfo.getNeed());
-        String tmpLoc = String.format(getResources().getString(
-                R.string.help_num_string), userInfo.getLocation());
-        String tmpTime = String.format(getResources().getString(
-                R.string.help_num_string), userInfo.getTimeStamp());
+        try {
+            String tmpNum = String.format(getResources().getString(
+                    R.string.help_num_string), userInfo.getNumber());
+            String tmpNeed = String.format(getResources().getString(
+                    R.string.help_num_string), userInfo.getNeed());
+            String tmpLoc = String.format(getResources().getString(
+                    R.string.help_num_string), userInfo.getLocation());
+            String tmpTime = String.format(getResources().getString(
+                    R.string.help_num_string), userInfo.getTimeStamp());
 
-        numText.setText(tmpNum);
-        needText.setText(tmpNeed);
-        locText.setText(tmpLoc);
-        timeText.setText(tmpTime);
+            numText.setText(tmpNum);
+            needText.setText(tmpNeed);
+            locText.setText(tmpLoc);
+            timeText.setText(tmpTime);
+
+        } catch (java.lang.NullPointerException e) {
+            Log.d(TAG, "Unable to pull from server. Resetting views.");
+            receivedData = false;
+            forceReset();
+        }
+    }
+
+    /**
+     * Resets the view, and does not bind text. Manual way to restore default view.
+     */
+    private void forceReset() {
+        foundReq.setVisibility(View.GONE);
+        noReqView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, String permissions[], int grantResults[]) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        } else {
+            Toast.makeText(getApplicationContext(),
+                    "Please grant permission to use app.", Toast.LENGTH_LONG).show();
+        }
     }
 }

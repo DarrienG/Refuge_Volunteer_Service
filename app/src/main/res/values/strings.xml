@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Volunteer Service</string>
+
+    <string name="dummy_button">Send Info</string>
+    <string name="dummy_content">VOLUNTEER SIGNUP</string>
+</resources>

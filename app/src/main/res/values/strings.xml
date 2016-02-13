@@ -18,5 +18,8 @@
     <string name="tower_loc_string">Location: %1$s</string>
     <!-- Timestamp of text -->
     <string name="msg_time_stamp_string">%1$s</string>
+
+    <!-- Menu item strings -->
+    <string name="menu_refresh">Refresh</string>
     
 </resources>

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -20,11 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-
 public class VolunteerPage extends AppCompatActivity {
     private static String TAG = "VolunteerPage";
     private boolean receivedData;
@@ -32,6 +26,11 @@ public class VolunteerPage extends AppCompatActivity {
     private HelpData userInfo;
     private static String NUM_VAL = "numVal";
     private String numUrl;
+
+    private static HelpData helpDatArray[] = {new HelpData("+19784088282", "food", "Lesbos", "7:00"),
+    new HelpData("+19293620383", "water", "Tropaia", "1:22"), new HelpData("+12345678903", "shelter", "Vytina", "2:32")};
+
+    private static int counter = 2;
 
     private TextView noReqView;
     private RelativeLayout foundReq;
@@ -49,8 +48,7 @@ public class VolunteerPage extends AppCompatActivity {
             numUrl = "+1" + numUrl;
         }
 
-        resetViews();
-        new getSugasBusData().execute();
+        pollDummyData();
     }
 
     @Override
@@ -73,8 +71,7 @@ public class VolunteerPage extends AppCompatActivity {
                         getApplicationContext(),
                         "Refreshing content...",
                         Toast.LENGTH_SHORT).show();
-                // pollDummyData();
-                pollData();
+                pollDummyData();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -90,7 +87,7 @@ public class VolunteerPage extends AppCompatActivity {
      * Poll Firebase server for new data.
      */
     private void pollData() {
-        new getSugasBusData().execute();
+        // do nothing
         resetViews();
     }
 
@@ -99,7 +96,12 @@ public class VolunteerPage extends AppCompatActivity {
      */
     private void pollDummyData() {
         receivedData = true;
-        userInfo = new HelpData("1234567890", "water", "Billerica", 5);
+        if (counter < 0) {
+            counter = 0;
+        }
+        userInfo = null;
+        userInfo = helpDatArray[counter];
+        --counter;
         resetViews();
     }
 
@@ -163,13 +165,13 @@ public class VolunteerPage extends AppCompatActivity {
 
         try {
             String tmpNum = String.format(getResources().getString(
-                    R.string.help_num_string), userInfo.getNumber());
+                    R.string.help_num_string), userInfo.getLocation());
             Log.d(TAG, "number");
             String tmpNeed = String.format(getResources().getString(
-                    R.string.req_string), (userInfo.getType() + ""));
+                    R.string.req_string), (userInfo.getType()));
             Log.d(TAG, "type");
             String tmpLoc = String.format(getResources().getString(
-                    R.string.tower_loc_string), userInfo.getLocation());
+                    R.string.tower_loc_string), userInfo.getNumber());
             Log.d(TAG, "loc");
             String tmpTime = String.format(getResources().getString(
                     R.string.msg_time_stamp_string), userInfo.getTimeStamp());
@@ -204,35 +206,5 @@ public class VolunteerPage extends AppCompatActivity {
                     "Please grant permission to use app.", Toast.LENGTH_LONG).show();
         }
     }
-
-    private class getSugasBusData extends AsyncTask<Void,Void,Object> {
-        //base url for all our endpoints
-
-        //this method is executes the following code in the background thread
-        //so that there is no crashing because of interaction with UI Thread
-        @Override
-        protected Object doInBackground(Void... params) {
-            Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/volunteers").child(numUrl).child("reqs");
-
-            myFirebaseRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        userInfo = postSnapshot.getValue(HelpData.class);
-                        receivedData = true;
-                    }
-                    Log.d(TAG, "Thing");
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                    Log.d(TAG, "Unable to read data");
-                    receivedData = false;
-                }
-            });
-            return null;
-        }
-    }
-
 }
 

@@ -3,7 +3,7 @@ package com.darrienglasser.refugevolunteerservice;
 public class HelpData {
     private String loc;
     private String sender;
-    private long time;
+    private String time;
     private String type;
 
 
@@ -22,7 +22,7 @@ public class HelpData {
      * @param location General location.
      * @param timeStamp When message was sent.
      */
-    public HelpData(String number, String type, String location, long timeStamp) {
+    public HelpData(String number, String type, String location, String timeStamp) {
         this.loc = number;
         this.type = type;
         this.sender = location;
@@ -41,7 +41,7 @@ public class HelpData {
         return loc;
     }
 
-    public long getTimeStamp() {
+    public String getTimeStamp() {
         return time;
     }
 

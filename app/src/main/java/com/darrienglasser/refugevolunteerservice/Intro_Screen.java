@@ -50,13 +50,12 @@ public class Intro_Screen extends AppCompatActivity {
                     editor.putBoolean(SENT_PREF, true).apply();
                     Firebase sendDetails = myFirebaseRef.child("volunteers");
                     TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-                    sendDetails.setValue(tm.getLine1Number());
+                    sendDetails.push().setValue(tm.getLine1Number());
                     startActivity(intent);
                     finishActivity(0);
                 }
             });
         } else {
-            //setContentView(R.layout.activity_volunteer_page);
             startActivity(new Intent(getApplicationContext(), VolunteerPage.class));
             finishActivity(0);
         }

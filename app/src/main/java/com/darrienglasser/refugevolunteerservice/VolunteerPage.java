@@ -2,8 +2,10 @@ package com.darrienglasser.refugevolunteerservice;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +19,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 public class VolunteerPage extends AppCompatActivity {
@@ -27,6 +31,8 @@ public class VolunteerPage extends AppCompatActivity {
     private boolean receivedData;
     private static final int REFRESH_ICON = 0;
     private HelpData userInfo;
+    private static String NUM_VAL = "numVal";
+    private String numUrl;
 
     private TextView noReqView;
     private RelativeLayout foundReq;
@@ -36,14 +42,41 @@ public class VolunteerPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volunteer_page);
 
-        Firebase.setAndroidContext(this);
-
         noReqView = (TextView) findViewById(R.id.no_req);
         foundReq = (RelativeLayout) findViewById(R.id.cardLayoutId);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        numUrl = settings.getString(NUM_VAL, "-1");
+        if (numUrl.indexOf(0) != '+') {
+            numUrl = "+1" + numUrl;
+        }
 
 
-        pollDummyData();
-        //pollData();
+        Firebase myFirebaseRef = new Firebase(
+                "https://refuge.firebaseio.com/volunteers/").child(numUrl).child("reqs");
+        Log.d(TAG, "thing");
+
+        myFirebaseRef.limitToLast(5).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot msgSnapshot: snapshot.getChildren()) {
+                    userInfo = msgSnapshot.getValue(userInfo.getClass());
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.e(TAG, "The read failed: " + firebaseError.getMessage());
+            }
+        });
+
+        resetViews();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
     }
 
     @Override
@@ -60,8 +93,8 @@ public class VolunteerPage extends AppCompatActivity {
                         getApplicationContext(),
                         "Refreshing content...",
                         Toast.LENGTH_SHORT).show();
-                pollDummyData();
-                // pollData();
+                // pollDummyData();
+                pollData();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -77,21 +110,35 @@ public class VolunteerPage extends AppCompatActivity {
      * Poll Firebase server for new data.
      */
     private void pollData() {
-        Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/");
+        Firebase myFirebaseRef = new Firebase(
+                "https://refuge.firebaseio.com/volunteers/" ).child(numUrl).child("/reqs");
+        Query queryRef = myFirebaseRef.orderByChild("number").startAt(0);
 
-        myFirebaseRef.addValueEventListener(new ValueEventListener() {
+        queryRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    userInfo = postSnapshot.getValue(HelpData.class);
-                    receivedData = true;
-                }
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                userInfo = dataSnapshot.getValue(HelpData.class);
+                receivedData = true;
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                // do nothing
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                // do nothing
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                // do nothing
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                Log.d(TAG, "Unable to read data");
-                receivedData = false;
+                // do nothing
             }
         });
         resetViews();
@@ -102,7 +149,7 @@ public class VolunteerPage extends AppCompatActivity {
      */
     private void pollDummyData() {
         receivedData = true;
-        userInfo = new HelpData("1234567890", "water", "Billerica", "5:00");
+        userInfo = new HelpData("1234567890", "water", "Billerica", 5);
         resetViews();
     }
 
@@ -167,12 +214,16 @@ public class VolunteerPage extends AppCompatActivity {
         try {
             String tmpNum = String.format(getResources().getString(
                     R.string.help_num_string), userInfo.getNumber());
+            Log.d(TAG, "number");
             String tmpNeed = String.format(getResources().getString(
-                    R.string.help_num_string), userInfo.getNeed());
+                    R.string.req_string), (userInfo.getType() + ""));
+            Log.d(TAG, "type");
             String tmpLoc = String.format(getResources().getString(
-                    R.string.help_num_string), userInfo.getLocation());
+                    R.string.tower_loc_string), userInfo.getLocation());
+            Log.d(TAG, "loc");
             String tmpTime = String.format(getResources().getString(
-                    R.string.help_num_string), userInfo.getTimeStamp());
+                    R.string.msg_time_stamp_string), userInfo.getTimeStamp());
+            Log.d(TAG, "time");
 
             numText.setText(tmpNum);
             needText.setText(tmpNeed);
@@ -180,7 +231,7 @@ public class VolunteerPage extends AppCompatActivity {
             timeText.setText(tmpTime);
 
         } catch (java.lang.NullPointerException e) {
-            Log.d(TAG, "Unable to pull from server. Resetting views.");
+            Log.d(TAG, "Unable to pull from server or no data. Resetting views.");
             receivedData = false;
             forceReset();
         }

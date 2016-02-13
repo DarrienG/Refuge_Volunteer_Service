@@ -21,6 +21,7 @@ import com.firebase.client.Firebase;
 public class Intro_Screen extends AppCompatActivity {
 
     private static String SENT_PREF = "sentFile";
+    private static String NUM_VAL = "numVal";
     int tmp;
 
     @Override
@@ -32,13 +33,14 @@ public class Intro_Screen extends AppCompatActivity {
         ActivityCompat.requestPermissions(
                 this, new String[]{Manifest.permission.READ_PHONE_STATE}, tmp);
 
+        Firebase.setAndroidContext(this);
+
 
 
         // Validate user if they have not already gone through validation process
         if (!haveDisplayed) {
             setContentView(R.layout.activity_intro_screen);
 
-            Firebase.setAndroidContext(this);
             final Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/");
 
             findViewById(R.id.send_button).setOnClickListener(new View.OnClickListener() {
@@ -48,8 +50,10 @@ public class Intro_Screen extends AppCompatActivity {
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putBoolean(SENT_PREF, true).apply();
                     TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-                    Firebase sendDetails = myFirebaseRef.child("volunteers").child(tm.getLine1Number());
+                    Firebase sendDetails = myFirebaseRef.child("volunteers")
+                            .child(tm.getLine1Number());
                     sendDetails.child("number").setValue(1);
+                    editor.putString(NUM_VAL, tm.getLine1Number());
                     startActivity(intent);
                     finishActivity(0);
                 }
@@ -75,7 +79,9 @@ public class Intro_Screen extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(),
                     "Please grant permission to use app.", Toast.LENGTH_LONG).show();
-            findViewById(R.id.send_button).setClickable(false);
+            if (findViewById(R.id.send_button).getVisibility() == View.VISIBLE){
+                findViewById(R.id.send_button).setClickable(false);
+            }
         }
     }
 }

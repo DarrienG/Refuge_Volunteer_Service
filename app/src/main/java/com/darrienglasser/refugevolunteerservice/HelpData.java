@@ -1,10 +1,11 @@
 package com.darrienglasser.refugevolunteerservice;
 
 public class HelpData {
-    private String number;
-    private String need;
-    private String location;
-    private String timeStamp;
+    private String loc;
+    private String sender;
+    private long time;
+    private String type;
+
 
     /**
      * Basic constructor. Left without arguments so Firebase can deserialze data.
@@ -17,30 +18,32 @@ public class HelpData {
      * Firebase.
      *
      * @param number Refugee number.
-     * @param need Required service.
+     * @param type Required service.
      * @param location General location.
      * @param timeStamp When message was sent.
      */
-    public HelpData(String number, String need, String location, String timeStamp) {
-        this.number = number;
-        this.need = need;
-        this.location = location;
-        this.timeStamp = timeStamp;
+    public HelpData(String number, String type, String location, long timeStamp) {
+        this.loc = number;
+        this.type = type;
+        this.sender = location;
+        this.time = timeStamp;
     }
 
     public String getNumber() {
-        return number;
+        return sender;
     }
 
-    public String getNeed() {
-        return need;
+    public String getType() {
+        return type;
     }
 
     public String getLocation() {
-        return location;
+        return loc;
     }
 
-    public String getTimeStamp() {
-        return timeStamp;
+    public long getTimeStamp() {
+        return time;
     }
+
+
 }

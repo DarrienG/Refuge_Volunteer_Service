@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,27 +22,27 @@ public class VolunteerPage extends AppCompatActivity {
     private static String TAG = "VolunteerPage";
     private boolean receivedData;
     private static final int REFRESH_ICON = 0;
+    private HelpData userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volunteer_page);
 
-        TextView noReqView = (TextView) findViewById(R.id.no_req);
-        RelativeLayout foundReq = (RelativeLayout) findViewById(R.id.cardLayoutId);
+        final TextView noReqView = (TextView) findViewById(R.id.no_req);
+        final RelativeLayout foundReq = (RelativeLayout) findViewById(R.id.cardLayoutId);
 
         Firebase.setAndroidContext(this);
 
         // Add back in when valid data is available
+        
         Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/");
-
-        final HelpData userInfo = null;
 
         myFirebaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    HelpData userInfo = postSnapshot.getValue(HelpData.class);
+                    userInfo = postSnapshot.getValue(HelpData.class);
                     receivedData = true;
                 }
             }
@@ -55,8 +56,18 @@ public class VolunteerPage extends AppCompatActivity {
 
         // TODO: Poll server to see if data has been received
         if (receivedData) {
-            bindViews(userInfo);
+            bindViews();
 
+            ImageButton check = (ImageButton) findViewById(R.id.checkButton);
+            check.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    noReqView.setVisibility(View.VISIBLE);
+                    noReqView.setText(getResources().getText(R.string.complete_string));
+                    foundReq.setVisibility(View.GONE);
+
+                }
+            });
             noReqView.setVisibility(View.GONE);
         } else {
             foundReq.setVisibility(View.GONE);
@@ -91,7 +102,7 @@ public class VolunteerPage extends AppCompatActivity {
         return true;
     }
 
-    private void bindViews(HelpData userInfo) {
+    private void bindViews() {
         TextView numText = (TextView) findViewById(R.id.numStatus);
         TextView needText = (TextView) findViewById(R.id.needStatus);
         TextView locText = (TextView) findViewById(R.id.locStatus);

@@ -39,9 +39,6 @@ public class Intro_Screen extends AppCompatActivity {
             Firebase.setAndroidContext(this);
             final Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/");
 
-            // Upon interacting with UI controls, delay any scheduled hide()
-            // operations to prevent the jarring behavior of controls going away
-            // while interacting with the UI.
             findViewById(R.id.send_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

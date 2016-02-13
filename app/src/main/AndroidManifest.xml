@@ -19,6 +19,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".VolunteerScreen"
+            android:label="@string/title_activity_volunteer_screen"
+            android:parentActivityName=".Intro_Screen"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.darrienglasser.refugevolunteerservice.Intro_Screen" />
+        </activity>
+        <activity android:name=".VolunteerPage"></activity>
     </application>
 
 </manifest>

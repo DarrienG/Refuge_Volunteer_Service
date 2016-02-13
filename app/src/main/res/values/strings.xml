@@ -2,5 +2,21 @@
     <string name="app_name">Volunteer Service</string>
 
     <string name="dummy_button">Send Info</string>
-    <string name="dummy_content">VOLUNTEER SIGNUP</string>
+    <string name="intro_text">VOLUNTEER SIGNUP</string>
+    <string name="blank_text"> </string>
+    <string name="title_activity_volunteer_screen">VolunteerScreen</string>
+
+    <string name="no_req_string">No requests yet!</string>
+
+    <string name="found_req">REQUEST FOUND</string>
+
+    <!-- Number of refugee -->
+    <string name="help_num_string">Number: %1$s</string>
+    <!-- Food, Water, Shelter -->
+    <string name="req_string">Need: %1$s</string>
+    <!-- Location of nearest cell tower -->
+    <string name="tower_loc_string">Location: %1$s</string>
+    <!-- Timestamp of text -->
+    <string name="msg_time_stamp_string">%1$s</string>
+    
 </resources>

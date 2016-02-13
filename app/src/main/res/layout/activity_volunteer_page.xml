@@ -1,108 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swiperefresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.darrienglasser.refugevolunteerservice.VolunteerPage">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/no_req"
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="50dp"
-        android:gravity="center_horizontal"
-        android:text="@string/no_req_string"
-        android:textColor="#000000"
-        android:textSize="50sp"
-        android:textStyle="bold" />
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.darrienglasser.refugevolunteerservice.VolunteerPage">
 
-
-    <RelativeLayout
-        android:id="@+id/cardLayoutId"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <Button
-            android:id="@+id/foundButton"
-            style="?metaButtonBarButtonStyle"
+        <TextView
+            android:id="@+id/no_req"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/colorAccent"
-            android:clickable="false"
-            android:text="@string/found_req"
-            android:textColor="#FFFFFF" />
+            android:layout_height="match_parent"
+            android:layout_marginEnd="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="50dp"
+            android:gravity="center_horizontal"
+            android:text="@string/no_req_string"
+            android:textColor="#000000"
+            android:textSize="50sp"
+            android:textStyle="bold" />
 
-        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/card_view"
+
+        <RelativeLayout
+            android:id="@+id/cardLayoutId"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_below="@id/foundButton"
-            android:layout_gravity="center"
-            card_view:cardCornerRadius="4dp">
+            android:layout_height="match_parent">
 
-            <RelativeLayout
+            <Button
+                android:id="@+id/foundButton"
+                style="?metaButtonBarButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorAccent"
+                android:clickable="false"
+                android:text="@string/found_req"
+                android:textColor="#FFFFFF" />
 
-                <TextView
-                    android:id="@+id/numStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:paddingTop="20dp"
-                    android:text="@string/help_num_string"
-                    android:textColor="@color/text_color"
-                    android:textSize="20sp" />
+            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@id/foundButton"
+                android:layout_gravity="center"
+                card_view:cardCornerRadius="4dp">
 
-                <TextView
-                    android:id="@+id/needStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/numStatus"
-                    android:paddingLeft="20dp"
-                    android:paddingTop="20dp"
-                    android:text="@string/req_string"
-                    android:textColor="@color/text_color"
-                    android:textSize="20sp" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/locStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/needStatus"
-                    android:paddingLeft="20dp"
-                    android:paddingTop="20dp"
-                    android:text="@string/tower_loc_string"
-                    android:textColor="@color/text_color"
-                    android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/numStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="20dp"
+                        android:paddingTop="20dp"
+                        android:text="@string/help_num_string"
+                        android:textColor="@color/text_color"
+                        android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/locStatus"
-                    android:paddingLeft="20dp"
-                    android:paddingTop="20dp"
-                    android:text="@string/msg_time_stamp_string"
-                    android:textColor="@color/text_color"
-                    android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/needStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/numStatus"
+                        android:paddingLeft="20dp"
+                        android:paddingTop="20dp"
+                        android:text="@string/req_string"
+                        android:textColor="@color/text_color"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/locStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/needStatus"
+                        android:paddingLeft="20dp"
+                        android:paddingTop="20dp"
+                        android:text="@string/tower_loc_string"
+                        android:textColor="@color/text_color"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/locStatus"
+                        android:paddingLeft="20dp"
+                        android:paddingTop="20dp"
+                        android:text="@string/msg_time_stamp_string"
+                        android:textColor="@color/text_color"
+                        android:textSize="20sp" />
 
 
-            </RelativeLayout>
+                </RelativeLayout>
 
-        </android.support.v7.widget.CardView>
+            </android.support.v7.widget.CardView>
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
-</RelativeLayout>
-
+</android.support.v4.widget.SwipeRefreshLayout>

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,11 +20,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 public class VolunteerPage extends AppCompatActivity {
@@ -50,32 +49,13 @@ public class VolunteerPage extends AppCompatActivity {
             numUrl = "+1" + numUrl;
         }
 
-
-        Firebase myFirebaseRef = new Firebase(
-                "https://refuge.firebaseio.com/volunteers/").child(numUrl).child("reqs");
-        Log.d(TAG, "thing");
-
-        myFirebaseRef.limitToLast(5).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot msgSnapshot: snapshot.getChildren()) {
-                    userInfo = msgSnapshot.getValue(userInfo.getClass());
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Log.e(TAG, "The read failed: " + firebaseError.getMessage());
-            }
-        });
-
         resetViews();
+        new getSugasBusData().execute();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
 
     }
 
@@ -110,37 +90,7 @@ public class VolunteerPage extends AppCompatActivity {
      * Poll Firebase server for new data.
      */
     private void pollData() {
-        Firebase myFirebaseRef = new Firebase(
-                "https://refuge.firebaseio.com/volunteers/" ).child(numUrl).child("/reqs");
-        Query queryRef = myFirebaseRef.orderByChild("number").startAt(0);
-
-        queryRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                userInfo = dataSnapshot.getValue(HelpData.class);
-                receivedData = true;
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                // do nothing
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                // do nothing
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                // do nothing
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                // do nothing
-            }
-        });
+        new getSugasBusData().execute();
         resetViews();
     }
 
@@ -254,4 +204,35 @@ public class VolunteerPage extends AppCompatActivity {
                     "Please grant permission to use app.", Toast.LENGTH_LONG).show();
         }
     }
+
+    private class getSugasBusData extends AsyncTask<Void,Void,Object> {
+        //base url for all our endpoints
+
+        //this method is executes the following code in the background thread
+        //so that there is no crashing because of interaction with UI Thread
+        @Override
+        protected Object doInBackground(Void... params) {
+            Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/volunteers").child(numUrl).child("reqs");
+
+            myFirebaseRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        userInfo = postSnapshot.getValue(HelpData.class);
+                        receivedData = true;
+                    }
+                    Log.d(TAG, "Thing");
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    Log.d(TAG, "Unable to read data");
+                    receivedData = false;
+                }
+            });
+            return null;
+        }
+    }
+
 }
+

@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -77,8 +78,6 @@ public class Intro_Screen extends AppCompatActivity {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             findViewById(R.id.send_button).setClickable(true);
         } else {
-            Toast.makeText(getApplicationContext(),
-                    "Please grant permission to use app.", Toast.LENGTH_LONG).show();
             if (findViewById(R.id.send_button).getVisibility() == View.VISIBLE){
                 findViewById(R.id.send_button).setClickable(false);
             }

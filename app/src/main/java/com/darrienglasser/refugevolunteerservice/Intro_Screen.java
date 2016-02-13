@@ -1,12 +1,16 @@
 package com.darrienglasser.refugevolunteerservice;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.view.View;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
@@ -17,12 +21,17 @@ import com.firebase.client.Firebase;
 public class Intro_Screen extends AppCompatActivity {
 
     private static String SENT_PREF = "sentFile";
+    int tmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         boolean haveDisplayed = settings.getBoolean(SENT_PREF, false);
+
+        ActivityCompat.requestPermissions(
+                this, new String[]{Manifest.permission.READ_PHONE_STATE}, tmp);
+
 
         if (!haveDisplayed) {
             setContentView(R.layout.activity_intro_screen);
@@ -61,5 +70,15 @@ public class Intro_Screen extends AppCompatActivity {
         // created, to briefly hint to the user that UI controls
         // are available.
     }
-
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, String permissions[], int grantResults[]) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            findViewById(R.id.send_button).setClickable(true);
+        } else {
+            Toast.makeText(getApplicationContext(),
+                    "Please grant permission to use app.", Toast.LENGTH_LONG).show();
+            findViewById(R.id.send_button).setClickable(false);
+        }
+    }
 }

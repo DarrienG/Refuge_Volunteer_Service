@@ -1,7 +1,5 @@
 package com.darrienglasser.refugevolunteerservice;
 
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,55 +22,21 @@ public class VolunteerPage extends AppCompatActivity {
     private static final int REFRESH_ICON = 0;
     private HelpData userInfo;
 
+    private TextView noReqView;
+    private RelativeLayout foundReq;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volunteer_page);
 
-        final TextView noReqView = (TextView) findViewById(R.id.no_req);
-        final RelativeLayout foundReq = (RelativeLayout) findViewById(R.id.cardLayoutId);
-
         Firebase.setAndroidContext(this);
 
-        // Add back in when valid data is available
-        
-        Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/");
+        noReqView = (TextView) findViewById(R.id.no_req);
+        foundReq = (RelativeLayout) findViewById(R.id.cardLayoutId);
 
-        myFirebaseRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    userInfo = postSnapshot.getValue(HelpData.class);
-                    receivedData = true;
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Log.d(TAG, "Unable to read data");
-                receivedData = false;
-            }
-        });
-
-        // TODO: Poll server to see if data has been received
-        if (receivedData) {
-            bindViews();
-
-            ImageButton check = (ImageButton) findViewById(R.id.checkButton);
-            check.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    noReqView.setVisibility(View.VISIBLE);
-                    noReqView.setText(getResources().getText(R.string.complete_string));
-                    foundReq.setVisibility(View.GONE);
-
-                }
-            });
-            noReqView.setVisibility(View.GONE);
-        } else {
-            foundReq.setVisibility(View.GONE);
-
-        }
+        // pollDummyData();
+        pollData();
     }
 
     @Override
@@ -90,6 +54,8 @@ public class VolunteerPage extends AppCompatActivity {
                         getApplicationContext(),
                         "Refreshing content...",
                         Toast.LENGTH_SHORT).show();
+                // pollDummyData();
+                pollData();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -122,5 +88,61 @@ public class VolunteerPage extends AppCompatActivity {
         locText.setText(tmpLoc);
         timeText.setText(tmpTime);
 
+    }
+
+    /**
+     * Poll Firebase server for new data.
+     */
+    private void pollData() {
+        Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/");
+
+        myFirebaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    userInfo = postSnapshot.getValue(HelpData.class);
+                    receivedData = true;
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.d(TAG, "Unable to read data");
+                receivedData = false;
+            }
+        });
+        resetViews();
+    }
+
+    /**
+     * DEBUG helper method. Puts fake data into object we're using.
+     */
+    private void pollDummyData() {
+        receivedData = true;
+        userInfo = new HelpData("9789789789", "water", "Billerica", "5:00");
+        resetViews();
+    }
+
+    private void resetViews() {
+        bindViews();
+        if (receivedData) {
+            bindViews();
+
+            ImageButton check = (ImageButton) findViewById(R.id.checkButton);
+            check.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    noReqView.setVisibility(View.VISIBLE);
+                    noReqView.setText(getResources().getText(R.string.complete_string));
+                    foundReq.setVisibility(View.GONE);
+
+                }
+            });
+            noReqView.setVisibility(View.GONE);
+            foundReq.setVisibility(View.VISIBLE);
+        } else {
+            foundReq.setVisibility(View.GONE);
+            noReqView.setVisibility(View.VISIBLE);
+        }
     }
 }

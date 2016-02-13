@@ -10,6 +10,14 @@ public class HelpData {
         // Empty, necessary for Firebase to deserialze data
     }
 
+    // DEBUG
+    public HelpData(String number, String need, String location, String timeStamp) {
+        this.number = number;
+        this.need = need;
+        this.location = location;
+        this.timeStamp = timeStamp;
+    }
+
     public String getNumber() {
         return number;
     }

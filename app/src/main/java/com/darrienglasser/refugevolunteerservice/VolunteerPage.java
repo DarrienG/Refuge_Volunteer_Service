@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +21,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
 public class VolunteerPage extends AppCompatActivity {
     private static String TAG = "VolunteerPage";
     private boolean receivedData;
@@ -26,11 +33,6 @@ public class VolunteerPage extends AppCompatActivity {
     private HelpData userInfo;
     private static String NUM_VAL = "numVal";
     private String numUrl;
-
-    private static HelpData helpDatArray[] = {new HelpData("+19784088282", "food", "Lesbos", "7:00"),
-    new HelpData("+19293620383", "water", "Tropaia", "1:22"), new HelpData("+12345678903", "shelter", "Vytina", "2:32")};
-
-    private static int counter = 2;
 
     private TextView noReqView;
     private RelativeLayout foundReq;
@@ -48,7 +50,8 @@ public class VolunteerPage extends AppCompatActivity {
             numUrl = "+1" + numUrl;
         }
 
-        pollDummyData();
+        resetViews();
+        new pullFromServer().execute();
     }
 
     @Override
@@ -71,7 +74,8 @@ public class VolunteerPage extends AppCompatActivity {
                         getApplicationContext(),
                         "Refreshing content...",
                         Toast.LENGTH_SHORT).show();
-                pollDummyData();
+                // pollDummyData();
+                pollData();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -87,7 +91,7 @@ public class VolunteerPage extends AppCompatActivity {
      * Poll Firebase server for new data.
      */
     private void pollData() {
-        // do nothing
+        new pullFromServer().execute();
         resetViews();
     }
 
@@ -96,12 +100,7 @@ public class VolunteerPage extends AppCompatActivity {
      */
     private void pollDummyData() {
         receivedData = true;
-        if (counter < 0) {
-            counter = 0;
-        }
-        userInfo = null;
-        userInfo = helpDatArray[counter];
-        --counter;
+        userInfo = new HelpData("1234567890", "water", "Billerica", 5);
         resetViews();
     }
 
@@ -129,7 +128,7 @@ public class VolunteerPage extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + userInfo.getNumber()));
+                    callIntent.setData(Uri.parse("tel:" + userInfo.getSender()));
 
                     if (ContextCompat.checkSelfPermission(VolunteerPage.this,
                             Manifest.permission.READ_CONTACTS)
@@ -165,16 +164,16 @@ public class VolunteerPage extends AppCompatActivity {
 
         try {
             String tmpNum = String.format(getResources().getString(
-                    R.string.help_num_string), userInfo.getLocation());
+                    R.string.help_num_string), userInfo.getSender());
             Log.d(TAG, "number");
             String tmpNeed = String.format(getResources().getString(
-                    R.string.req_string), (userInfo.getType()));
+                    R.string.req_string), (userInfo.getType() + ""));
             Log.d(TAG, "type");
             String tmpLoc = String.format(getResources().getString(
-                    R.string.tower_loc_string), userInfo.getNumber());
+                    R.string.tower_loc_string), userInfo.getLoc());
             Log.d(TAG, "loc");
             String tmpTime = String.format(getResources().getString(
-                    R.string.msg_time_stamp_string), userInfo.getTimeStamp());
+                    R.string.msg_time_stamp_string), userInfo.getTime());
             Log.d(TAG, "time");
 
             numText.setText(tmpNum);
@@ -199,12 +198,39 @@ public class VolunteerPage extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(
-            int requestCode, String permissions[], int grantResults[]) {
+            int requestCode, @NonNull String permissions[], @NonNull int grantResults[]) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
         } else {
             Toast.makeText(getApplicationContext(),
                     "Please grant permission to use app.", Toast.LENGTH_LONG).show();
         }
     }
+
+    private class pullFromServer extends AsyncTask<Void,Void,Object> {
+        @Override
+        protected Object doInBackground(Void... params) {
+            Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/volunteers").child("+19789302385").child("reqs");
+
+            myFirebaseRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        userInfo = postSnapshot.getValue(HelpData.class);
+                        receivedData = true;
+                    }
+                    Log.d(TAG, "Thing");
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    Log.d(TAG, "Unable to read data");
+                    receivedData = false;
+                }
+            });
+            return null;
+        }
+    }
+
 }
 

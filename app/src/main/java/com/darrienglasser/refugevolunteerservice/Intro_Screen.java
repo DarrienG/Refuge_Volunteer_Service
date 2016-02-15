@@ -54,7 +54,7 @@ public class Intro_Screen extends AppCompatActivity {
                     Firebase sendDetails = myFirebaseRef.child("volunteers")
                             .child(tm.getLine1Number());
                     sendDetails.child("number").setValue(1);
-                    editor.putString(NUM_VAL, tm.getLine1Number());
+                    editor.putString(NUM_VAL, tm.getLine1Number()).apply();
                     startActivity(intent);
                     finishActivity(0);
                 }

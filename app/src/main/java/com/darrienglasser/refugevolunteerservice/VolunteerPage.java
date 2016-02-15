@@ -46,9 +46,6 @@ public class VolunteerPage extends AppCompatActivity {
         foundReq = (RelativeLayout) findViewById(R.id.cardLayoutId);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         numUrl = settings.getString(NUM_VAL, "-1");
-        if (numUrl.indexOf(0) != '+') {
-            numUrl = "+1" + numUrl;
-        }
 
         resetViews();
         new pullFromServer().execute();
@@ -210,7 +207,10 @@ public class VolunteerPage extends AppCompatActivity {
     private class pullFromServer extends AsyncTask<Void,Void,Object> {
         @Override
         protected Object doInBackground(Void... params) {
-            Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/volunteers").child("+19789302385").child("reqs");
+            Log.d(TAG, "numURL: " + numUrl);
+            Firebase myFirebaseRef = new Firebase(
+                    "https://refuge.firebaseio.com/volunteers").child(
+                    numUrl).child("reqs");
 
             myFirebaseRef.addValueEventListener(new ValueEventListener() {
                 @Override

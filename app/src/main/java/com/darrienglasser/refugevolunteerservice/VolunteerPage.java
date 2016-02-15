@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.firebase.client.annotations.NotNull;
 
 public class VolunteerPage extends AppCompatActivity {
     private static String TAG = "VolunteerPage";
@@ -50,7 +52,7 @@ public class VolunteerPage extends AppCompatActivity {
         }
 
         resetViews();
-        new getSugasBusData().execute();
+        new pullFromServer().execute();
     }
 
     @Override
@@ -90,7 +92,7 @@ public class VolunteerPage extends AppCompatActivity {
      * Poll Firebase server for new data.
      */
     private void pollData() {
-        new getSugasBusData().execute();
+        new pullFromServer().execute();
         resetViews();
     }
 
@@ -127,7 +129,7 @@ public class VolunteerPage extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + userInfo.getNumber()));
+                    callIntent.setData(Uri.parse("tel:" + userInfo.getSender()));
 
                     if (ContextCompat.checkSelfPermission(VolunteerPage.this,
                             Manifest.permission.READ_CONTACTS)
@@ -163,16 +165,16 @@ public class VolunteerPage extends AppCompatActivity {
 
         try {
             String tmpNum = String.format(getResources().getString(
-                    R.string.help_num_string), userInfo.getNumber());
+                    R.string.help_num_string), userInfo.getSender());
             Log.d(TAG, "number");
             String tmpNeed = String.format(getResources().getString(
                     R.string.req_string), (userInfo.getType() + ""));
             Log.d(TAG, "type");
             String tmpLoc = String.format(getResources().getString(
-                    R.string.tower_loc_string), userInfo.getLocation());
+                    R.string.tower_loc_string), userInfo.getLoc());
             Log.d(TAG, "loc");
             String tmpTime = String.format(getResources().getString(
-                    R.string.msg_time_stamp_string), userInfo.getTimeStamp());
+                    R.string.msg_time_stamp_string), userInfo.getTime());
             Log.d(TAG, "time");
 
             numText.setText(tmpNum);
@@ -197,22 +199,19 @@ public class VolunteerPage extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(
-            int requestCode, String permissions[], int grantResults[]) {
+            int requestCode, @NonNull String permissions[], @NonNull int grantResults[]) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
         } else {
             Toast.makeText(getApplicationContext(),
                     "Please grant permission to use app.", Toast.LENGTH_LONG).show();
         }
     }
 
-    private class getSugasBusData extends AsyncTask<Void,Void,Object> {
-        //base url for all our endpoints
-
-        //this method is executes the following code in the background thread
-        //so that there is no crashing because of interaction with UI Thread
+    private class pullFromServer extends AsyncTask<Void,Void,Object> {
         @Override
         protected Object doInBackground(Void... params) {
-            Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/volunteers").child(numUrl).child("reqs");
+            Firebase myFirebaseRef = new Firebase("https://refuge.firebaseio.com/volunteers").child("+19789302385").child("reqs");
 
             myFirebaseRef.addValueEventListener(new ValueEventListener() {
                 @Override

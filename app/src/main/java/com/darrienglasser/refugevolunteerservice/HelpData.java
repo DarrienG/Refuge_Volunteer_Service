@@ -29,7 +29,7 @@ public class HelpData {
         this.time = timeStamp;
     }
 
-    public String getNumber() {
+    public String getSender() {
         return sender;
     }
 
@@ -37,11 +37,11 @@ public class HelpData {
         return type;
     }
 
-    public String getLocation() {
+    public String getLoc() {
         return loc;
     }
 
-    public long getTimeStamp() {
+    public long getTime() {
         return time;
     }
 

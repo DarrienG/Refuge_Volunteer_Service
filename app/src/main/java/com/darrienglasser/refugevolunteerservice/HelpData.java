@@ -1,6 +1,8 @@
 package com.darrienglasser.refugevolunteerservice;
 
-public class HelpData {
+import java.io.Serializable;
+
+public class HelpData implements Serializable {
     private String loc;
     private String sender;
     private long time;

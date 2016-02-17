@@ -31,7 +31,8 @@ public class VolunteerPage extends AppCompatActivity {
     private boolean receivedData;
     private static final int REFRESH_ICON = 0;
     private HelpData userInfo;
-    private static String NUM_VAL = "numVal";
+    private static final String NUM_VAL = "numVal";
+    private static final String DAT_VAL = "infoVal";
     private String numUrl;
 
     private TextView noReqView;
@@ -52,9 +53,15 @@ public class VolunteerPage extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    public void onSaveInstanceState (Bundle saveInstanceState) {
+        saveInstanceState.putSerializable(DAT_VAL, userInfo);
+    }
 
+    @Override
+    public void onRestoreInstanceState (Bundle saveInstanceState) {
+        Object tmp = saveInstanceState.getSerializable(DAT_VAL);
+        userInfo = tmp == null ? userInfo : (HelpData) tmp;
+        receivedData = userInfo != null;
     }
 
     @Override
@@ -85,7 +92,7 @@ public class VolunteerPage extends AppCompatActivity {
     }
 
     /**
-     * Poll Firebase server for new data.
+     * Poll Firebase server for new data. Reset data in between calls.
      */
     private void pollData() {
         new pullFromServer().execute();
@@ -105,7 +112,6 @@ public class VolunteerPage extends AppCompatActivity {
      * Reset views in accordance with user interaction.
      */
     private void resetViews() {
-        bindViews();
         if (receivedData) {
             bindViews();
 
@@ -197,7 +203,7 @@ public class VolunteerPage extends AppCompatActivity {
     public void onRequestPermissionsResult(
             int requestCode, @NonNull String permissions[], @NonNull int grantResults[]) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+            // All set, no need to do anything
         } else {
             Toast.makeText(getApplicationContext(),
                     "Please grant permission to use app.", Toast.LENGTH_LONG).show();
@@ -211,6 +217,7 @@ public class VolunteerPage extends AppCompatActivity {
             Firebase myFirebaseRef = new Firebase(
                     "https://refuge.firebaseio.com/volunteers").child(
                     numUrl).child("reqs");
+            userInfo = null;
 
             myFirebaseRef.addValueEventListener(new ValueEventListener() {
                 @Override

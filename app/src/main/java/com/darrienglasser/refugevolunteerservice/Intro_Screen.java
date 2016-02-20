@@ -1,10 +1,14 @@
 package com.darrienglasser.refugevolunteerservice;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,16 +54,21 @@ public class Intro_Screen extends AppCompatActivity {
             findViewById(R.id.send_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), VolunteerPage.class);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putBoolean(SENT_PREF, true).apply();
-                    TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-                    Firebase sendDetails = myFirebaseRef.child("volunteers")
-                            .child(tm.getLine1Number());
-                    sendDetails.child("number").setValue(1);
-                    editor.putString(NUM_VAL, tm.getLine1Number()).apply();
-                    startActivity(intent);
-                    finishActivity(0);
+                    if (isNetworkAvailable()) {
+                        Intent intent = new Intent(v.getContext(), VolunteerPage.class);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean(SENT_PREF, true).apply();
+                        TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                        Firebase sendDetails = myFirebaseRef.child("volunteers")
+                                .child(tm.getLine1Number());
+                        sendDetails.child("number").setValue(1);
+                        editor.putString(NUM_VAL, tm.getLine1Number()).apply();
+                        startActivity(intent);
+                        finishActivity(0);
+                    } else {
+                        Snackbar.make(
+                                v, "Not connected to valid network", Snackbar.LENGTH_LONG).show();
+                    }
                 }
             });
         } else {
@@ -85,5 +94,17 @@ public class Intro_Screen extends AppCompatActivity {
                 findViewById(R.id.send_button).setClickable(false);
             }
         }
+    }
+
+    /**
+     * Helper method. Determines if the user has network connectivity or not.
+     *
+     * @return Validity of network connection.
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

@@ -46,6 +46,4 @@ public class HelpData implements Serializable {
     public long getTime() {
         return time;
     }
-
-
 }

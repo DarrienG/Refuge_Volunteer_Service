@@ -226,7 +226,6 @@ public class VolunteerPage extends AppCompatActivity {
                         userInfo = postSnapshot.getValue(HelpData.class);
                         receivedData = true;
                     }
-                    Log.d(TAG, "Thing");
                 }
 
                 @Override

@@ -18,7 +18,8 @@
             android:name=".Intro_Screen"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/FullscreenTheme">
+            android:theme="@style/FullscreenTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,12 +30,16 @@
             android:name=".VolunteerScreen"
             android:label="@string/title_activity_volunteer_screen"
             android:parentActivityName=".Intro_Screen"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.darrienglasser.refugevolunteerservice.Intro_Screen" />
         </activity>
-        <activity android:name=".VolunteerPage"></activity>
+        <activity android:name=".VolunteerPage"
+            android:value="com.darrienglasser.refugevolunteerservice.Intro_Screen"
+            android:screenOrientation="portrait"
+        />
     </application>
 
 </manifest>

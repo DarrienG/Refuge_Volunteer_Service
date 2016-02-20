@@ -21,7 +21,10 @@ import com.firebase.client.Firebase;
  */
 public class Intro_Screen extends AppCompatActivity {
 
+    /** Key used with settings to see if user sent in their number. */
     private static String SENT_PREF = "sentFile";
+
+    /** The user's number, once entered. */
     private static String NUM_VAL = "numVal";
     int tmp;
 

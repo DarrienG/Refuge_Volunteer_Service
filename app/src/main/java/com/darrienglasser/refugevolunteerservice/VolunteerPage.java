@@ -31,15 +31,35 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 public class VolunteerPage extends AppCompatActivity {
+
+    /** Tag to reference the activity. */
     private static String TAG = "VolunteerPage";
+
+    /** Whether or not data was received. */
     private boolean receivedData;
+
+    /** Enum-esque variable to reference menu item. */
     private static final int REFRESH_ICON = 0;
-    private HelpData userInfo;
+
+    /** Key to reference user's number from local storage. */
     private static final String NUM_VAL = "numVal";
+
+    /**
+     * Key to reference data between screen rotations. Not necessary right now, as we
+     * for screen rotation to portrait,
+     */
     private static final String DAT_VAL = "infoVal";
+
+    /** Data taken from server. */
+    private HelpData userInfo;
+
+    /** String used to hold hold user's number when retrieved from local storage. */
     private String numUrl;
 
+    /** TextView displayed when there is no data retrieved from server. */
     private TextView noReqView;
+
+    /** Layout displayed when data can be retrieved and bound to a view. */
     private RelativeLayout foundReq;
 
     @Override

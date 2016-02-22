@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -49,6 +48,8 @@ public class VolunteerPage extends AppCompatActivity {
      * for screen rotation to portrait,
      */
     private static final String DAT_VAL = "infoVal";
+
+    private Firebase mFirebaseRef;
 
     /** Data taken from server. */
     private HelpData userInfo;
@@ -152,10 +153,18 @@ public class VolunteerPage extends AppCompatActivity {
             check.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    noReqView.setVisibility(View.VISIBLE);
-                    noReqView.setText(getResources().getText(R.string.complete_string));
-                    foundReq.setVisibility(View.GONE);
-
+                    if (isNetworkAvailable()) {
+                        noReqView.setVisibility(View.VISIBLE);
+                        noReqView.setText(getResources().getText(R.string.complete_string));
+                        foundReq.setVisibility(View.GONE);
+                        removeEntryFromServer remover = new removeEntryFromServer();
+                        remover.execute();
+                    } else {
+                        Toast.makeText(
+                                getApplicationContext(),
+                                "Not connected to valid network.",
+                                Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 
@@ -247,12 +256,15 @@ public class VolunteerPage extends AppCompatActivity {
         @Override
         protected Object doInBackground(Void... params) {
             Log.d(TAG, "numURL: " + numUrl);
-            Firebase myFirebaseRef = new Firebase(
+            //mFirebaseRef = new Firebase(
+            //        "https://refuge.firebaseio.com/volunteers").child(
+            //        numUrl).child("reqs");
+            mFirebaseRef = new Firebase(
                     "https://refuge.firebaseio.com/volunteers").child(
-                    numUrl).child("reqs");
+                    "+19789302385").child("reqs");
             userInfo = null;
 
-            myFirebaseRef.addValueEventListener(new ValueEventListener() {
+            mFirebaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
@@ -267,6 +279,14 @@ public class VolunteerPage extends AppCompatActivity {
                     receivedData = false;
                 }
             });
+            return null;
+        }
+    }
+
+    private class removeEntryFromServer extends AsyncTask<Void,Void,Object> {
+        @Override
+        protected Object doInBackground(Void... params) {
+            mFirebaseRef.removeValue();
             return null;
         }
     }

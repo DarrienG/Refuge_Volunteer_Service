@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -57,18 +58,22 @@ public class VolunteerPage extends AppCompatActivity {
     private String numUrl;
 
     /** TextView displayed when there is no data retrieved from server. */
-    private TextView noReqView;
+    private RelativeLayout noReqView;
 
     /** Layout displayed when data can be retrieved and bound to a view. */
     private RelativeLayout foundReq;
+
+    /** Button displayed within noReqView. */
+    private Button noReqText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volunteer_page);
 
-        noReqView = (TextView) findViewById(R.id.no_req);
+        noReqView = (RelativeLayout) findViewById(R.id.no_req);
         foundReq = (RelativeLayout) findViewById(R.id.cardLayoutId);
+        noReqText = (Button) findViewById(R.id.notFoundButton);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         numUrl = settings.getString(NUM_VAL, "-1");
 
@@ -152,8 +157,8 @@ public class VolunteerPage extends AppCompatActivity {
             check.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    noReqView.setVisibility(View.VISIBLE);
-                    noReqView.setText(getResources().getText(R.string.complete_string));
+                    noReqText.setVisibility(View.VISIBLE);
+                    noReqText.setText(getResources().getText(R.string.complete_string));
                     foundReq.setVisibility(View.GONE);
 
                 }

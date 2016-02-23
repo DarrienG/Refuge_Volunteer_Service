@@ -10,19 +10,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.darrienglasser.refugevolunteerservice.VolunteerPage">
 
-    <TextView
+
+    <RelativeLayout
         android:id="@+id/no_req"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="50dp"
-        android:gravity="center_horizontal"
-        android:text="@string/no_req_string"
-        android:textColor="#000000"
-        android:textSize="50sp"
-        android:textStyle="bold" />
+        android:animateLayoutChanges="true">
+
+        <Button
+            android:id="@+id/notFoundButton"
+            style="?metaButtonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorNegative"
+            android:clickable="false"
+            android:text="@string/no_req_string"
+            android:textColor="#FFFFFF" />
+
+    </RelativeLayout>
 
 
     <RelativeLayout
@@ -130,6 +137,5 @@
 
         </LinearLayout>
     </RelativeLayout>
-
 </RelativeLayout>
 

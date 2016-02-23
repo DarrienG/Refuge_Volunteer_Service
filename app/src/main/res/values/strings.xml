@@ -6,7 +6,7 @@
     <string name="blank_text"> </string>
     <string name="title_activity_volunteer_screen">VolunteerScreen</string>
 
-    <string name="no_req_string">No requests yet!</string>
+    <string name="no_req_string">No requests yet</string>
     <string name="complete_string">All requests complete!</string>
 
     <string name="found_req">REQUEST FOUND</string>

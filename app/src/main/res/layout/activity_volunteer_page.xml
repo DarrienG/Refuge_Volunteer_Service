@@ -12,49 +12,15 @@
 
 
     <RelativeLayout
-        android:id="@+id/no_req"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:animateLayoutChanges="true">
-
-        <Button
-            android:id="@+id/notFoundButton"
-            style="?metaButtonBarButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/colorNegative"
-            android:clickable="false"
-            android:text="@string/no_req_string"
-            android:textColor="#FFFFFF" />
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
         android:id="@+id/cardLayoutId"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true">
 
-        <Button
-            android:id="@+id/foundButton"
-            style="?metaButtonBarButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/colorAccent"
-            android:clickable="false"
-            android:text="@string/found_req"
-            android:textColor="#FFFFFF" />
-
         <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:id="@+id/card_view"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_below="@id/foundButton"
             android:layout_gravity="center"
             card_view:cardCornerRadius="4dp">
 
@@ -132,10 +98,68 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:src="@drawable/ic_check"
-                android:layout_marginTop="10dp"
-                android:layout_alignRight="@id/card_view"/>
+                android:layout_marginTop="10dp" />
 
         </LinearLayout>
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/no_req"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:gravity="bottom">
+
+        <ImageView
+            android:padding="35dp"
+            android:id="@+id/helperImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/no_req_splash" />
+
+        <Button
+            android:id="@+id/notFoundButton"
+            style="?metaButtonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorNegative"
+            android:layout_below="@id/helperImage"
+            android:text="@string/no_req_string"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/notFoundButton"
+            android:layout_marginBottom="30dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"
+            android:text="@string/complete_view" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+
+        <Button
+            android:id="@+id/foundButton"
+            style="?metaButtonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorAccent"
+            android:clickable="false"
+            android:text="@string/found_req"
+            android:textColor="#FFFFFF" />
+    </RelativeLayout>
+
 </RelativeLayout>
 

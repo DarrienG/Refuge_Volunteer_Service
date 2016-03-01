@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +67,9 @@ public class VolunteerPage extends AppCompatActivity {
     /** Button displayed within noReqView. */
     private Button noReqText;
 
+    /** Button displayed when a match is found. */
+    private Button foundButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +78,7 @@ public class VolunteerPage extends AppCompatActivity {
         noReqView = (RelativeLayout) findViewById(R.id.no_req);
         foundReq = (RelativeLayout) findViewById(R.id.cardLayoutId);
         noReqText = (Button) findViewById(R.id.notFoundButton);
+        foundButton = (Button) findViewById(R.id.foundButton);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         numUrl = settings.getString(NUM_VAL, "-1");
 
@@ -160,6 +165,7 @@ public class VolunteerPage extends AppCompatActivity {
                     noReqText.setVisibility(View.VISIBLE);
                     noReqText.setText(getResources().getText(R.string.complete_string));
                     foundReq.setVisibility(View.GONE);
+                    foundButton.setVisibility(View.GONE);
 
                 }
             });
@@ -188,8 +194,10 @@ public class VolunteerPage extends AppCompatActivity {
 
             noReqView.setVisibility(View.GONE);
             foundReq.setVisibility(View.VISIBLE);
+            foundButton.setVisibility(View.VISIBLE);
         } else {
             foundReq.setVisibility(View.GONE);
+            foundButton.setVisibility(View.GONE);
             noReqView.setVisibility(View.VISIBLE);
         }
     }

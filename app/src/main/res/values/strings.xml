@@ -6,8 +6,9 @@
     <string name="blank_text"> </string>
     <string name="title_activity_volunteer_screen">VolunteerScreen</string>
 
-    <string name="no_req_string">No requests yet</string>
-    <string name="complete_string">All requests complete!</string>
+    <string name="no_req_string">Search for requests</string>
+    <string name="complete_string">All requests complete! Search for more requests using the button below.</string>
+    <string name="complete_view">No requests yet. Press the button below to check for some!</string>
 
     <string name="found_req">REQUEST FOUND</string>
 

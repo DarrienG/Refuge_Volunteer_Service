@@ -17,12 +17,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,9 +36,6 @@ public class VolunteerPage extends AppCompatActivity {
 
     /** Whether or not data was received. */
     private boolean receivedData;
-
-    /** Enum-esque variable to reference menu item. */
-    private static final int REFRESH_ICON = 0;
 
     /** Key to reference user's number from local storage. */
     private static final String NUM_VAL = "numVal";
@@ -82,6 +76,20 @@ public class VolunteerPage extends AppCompatActivity {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         numUrl = settings.getString(NUM_VAL, "-1");
 
+        noReqText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isNetworkAvailable()) {
+                    Snackbar.make(v, "Refreshing content...", Snackbar.LENGTH_LONG).show();
+                    pollData();
+                    // pollDummyData();
+                } else {
+                    Snackbar.make(
+                            v, "Not connected to a valid network", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+
         resetViews();
         new pullFromServer().execute();
     }
@@ -102,36 +110,6 @@ public class VolunteerPage extends AppCompatActivity {
     public void onBackPressed() {
         // Do nothing
         // We don't want to let the user go back to the parent activity
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case REFRESH_ICON:
-                if (isNetworkAvailable()) {
-                    Toast.makeText(
-                            getApplicationContext(),
-                            "Refreshing content...",
-                            Toast.LENGTH_SHORT).show();
-                    // pollDummyData();
-                    pollData();
-                    return true;
-                } else {
-                    Toast.makeText(
-                            getApplicationContext(),
-                            "Not connected to valid network",
-                            Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, REFRESH_ICON, Menu.NONE, "Refresh").setIcon(R.drawable.ic_refresh_icon);
-        return true;
     }
 
     /**
@@ -164,8 +142,8 @@ public class VolunteerPage extends AppCompatActivity {
                 public void onClick(View v) {
                     noReqText.setVisibility(View.VISIBLE);
                     noReqText.setText(getResources().getText(R.string.complete_string));
-                    foundReq.setVisibility(View.GONE);
-                    foundButton.setVisibility(View.GONE);
+                    foundReq.setVisibility(View.INVISIBLE);
+                    foundButton.setVisibility(View.INVISIBLE);
 
                 }
             });
@@ -192,12 +170,12 @@ public class VolunteerPage extends AppCompatActivity {
                 }
             });
 
-            noReqView.setVisibility(View.GONE);
+            noReqView.setVisibility(View.INVISIBLE);
             foundReq.setVisibility(View.VISIBLE);
             foundButton.setVisibility(View.VISIBLE);
         } else {
-            foundReq.setVisibility(View.GONE);
-            foundButton.setVisibility(View.GONE);
+            foundReq.setVisibility(View.INVISIBLE);
+            foundButton.setVisibility(View.INVISIBLE);
             noReqView.setVisibility(View.VISIBLE);
         }
     }
@@ -214,16 +192,12 @@ public class VolunteerPage extends AppCompatActivity {
         try {
             String tmpNum = String.format(getResources().getString(
                     R.string.help_num_string), userInfo.getSender());
-            Log.d(TAG, "number");
             String tmpNeed = String.format(getResources().getString(
                     R.string.req_string), (userInfo.getType() + ""));
-            Log.d(TAG, "type");
             String tmpLoc = String.format(getResources().getString(
                     R.string.tower_loc_string), userInfo.getLoc());
-            Log.d(TAG, "loc");
             String tmpTime = String.format(getResources().getString(
                     R.string.msg_time_stamp_string), userInfo.getTime());
-            Log.d(TAG, "time");
 
             numText.setText(tmpNum);
             needText.setText(tmpNeed);
@@ -241,7 +215,7 @@ public class VolunteerPage extends AppCompatActivity {
      * Resets the view, and does not bind text. Manual way to restore default view.
      */
     private void forceReset() {
-        foundReq.setVisibility(View.GONE);
+        foundReq.setVisibility(View.INVISIBLE);
         noReqView.setVisibility(View.VISIBLE);
     }
 
@@ -259,7 +233,6 @@ public class VolunteerPage extends AppCompatActivity {
     private class pullFromServer extends AsyncTask<Void,Void,Object> {
         @Override
         protected Object doInBackground(Void... params) {
-            Log.d(TAG, "numURL: " + numUrl);
             Firebase myFirebaseRef = new Firebase(
                     "https://refuge.firebaseio.com/volunteers").child(
                     numUrl).child("reqs");

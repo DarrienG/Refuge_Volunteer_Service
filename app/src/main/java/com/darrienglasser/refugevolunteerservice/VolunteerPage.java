@@ -59,30 +59,33 @@ public class VolunteerPage extends AppCompatActivity {
     private RelativeLayout foundReq;
 
     /** Button displayed within noReqView. */
-    private Button noReqText;
+    private Button noReqButton;
 
     /** Button displayed when a match is found. */
     private Button foundButton;
+
+    private TextView noReqText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volunteer_page);
 
+        noReqText = (TextView) findViewById(R.id.noReqText);
         noReqView = (RelativeLayout) findViewById(R.id.no_req);
         foundReq = (RelativeLayout) findViewById(R.id.cardLayoutId);
-        noReqText = (Button) findViewById(R.id.notFoundButton);
+        noReqButton = (Button) findViewById(R.id.notFoundButton);
         foundButton = (Button) findViewById(R.id.foundButton);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         numUrl = settings.getString(NUM_VAL, "-1");
 
-        noReqText.setOnClickListener(new View.OnClickListener() {
+        noReqButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isNetworkAvailable()) {
                     Snackbar.make(v, "Refreshing content...", Snackbar.LENGTH_LONG).show();
-                    pollData();
-                    // pollDummyData();
+                    // pollData();
+                    pollDummyData();
                 } else {
                     Snackbar.make(
                             v, "Not connected to a valid network", Snackbar.LENGTH_LONG).show();
@@ -140,7 +143,8 @@ public class VolunteerPage extends AppCompatActivity {
             check.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    noReqText.setVisibility(View.VISIBLE);
+                    noReqView.setVisibility(View.VISIBLE);
+                    noReqButton.setVisibility(View.VISIBLE);
                     noReqText.setText(getResources().getText(R.string.complete_string));
                     foundReq.setVisibility(View.INVISIBLE);
                     foundButton.setVisibility(View.INVISIBLE);

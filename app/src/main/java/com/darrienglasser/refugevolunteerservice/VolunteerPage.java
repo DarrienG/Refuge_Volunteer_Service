@@ -84,8 +84,8 @@ public class VolunteerPage extends AppCompatActivity {
             public void onClick(View v) {
                 if (isNetworkAvailable()) {
                     Snackbar.make(v, "Refreshing content...", Snackbar.LENGTH_LONG).show();
-                    // pollData();
-                    pollDummyData();
+                    pollData();
+                    // pollDummyData();
                 } else {
                     Snackbar.make(
                             v, "Not connected to a valid network", Snackbar.LENGTH_LONG).show();
